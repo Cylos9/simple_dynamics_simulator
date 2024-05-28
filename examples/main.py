@@ -50,22 +50,22 @@ License:
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
     OF SUCH DAMAGE.
 """
-import os
-from pathlib import Path
+import sys
+import os 
 import yaml
 import csv
 import numpy as np
 
-from model.tractor_trailer_model import TractorTrailerModel
-from simulator.simulator import Simulator
-from graphic.animator import Animator
+package_path = os.path.join(os.path.dirname(__file__), '..')
+sys.path.append(os.path.abspath(package_path))
+
+from models.tractor_trailer_model import TractorTrailerModel
+from simple_dynamics_simulator.simulator import Simulator
+from simple_dynamics_simulator.graphic.animator import Animator
 
 def get_params(file_name, config_path=None):
     
     if config_path == None: 
-        
-        package_path = str(Path(__file__).resolve().parent.parent)
-        
         config_path = os.path.join(package_path, "config")
     
     with open(os.path.join( config_path, file_name), "r") as file:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     
     params = get_params("params.yaml")
     
-    data = read_csv("/home/cylos/tutlab/dynamics_simulator/data/system_input.csv")
+    data = read_csv(os.path.join(package_path,"data/system_input.csv"))
     
     step_size = 0.2
     

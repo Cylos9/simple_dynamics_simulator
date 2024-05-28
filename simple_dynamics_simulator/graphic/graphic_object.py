@@ -54,17 +54,19 @@ License:
 
 class Rectangle:
     
-    def __init__(self, name, pose, length, width, params={}):
+    def __init__(self, name, pose, width, height, params={}):
         
         self.name = name
         
         self.pose = pose
         
-        self.length = length
-        
         self.width = width
         
+        self.height = height
+        
         self.params = params
+        
+        self.type = "rectangle"
 
 class Circle:
     
@@ -78,5 +80,7 @@ class Circle:
         
         self.params = params
 
+        self.type = "circle"
+        
 class Polygon:
     pass
