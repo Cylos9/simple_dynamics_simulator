@@ -1,0 +1,17 @@
+num_states: 4
+num_inputs: 2
+
+length_back: 0.23
+length_front: 0.83
+
+graphic_model_params:
+    tractor:
+        length: 0.14
+        width: 0.2
+
+    trailer:
+        length: 0.6
+        width: 0.2
+
+    connected_joint:
+        radius: 0.2
