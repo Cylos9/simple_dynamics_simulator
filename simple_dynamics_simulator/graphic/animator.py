@@ -7,7 +7,8 @@ import matplotlib.animation as animation
 
 class Animator:
     
-    def __init__(self, model):
+    def __init__(self, param, model):
+        self._param = param
         self._model = model
         self._figure, self._axes = plt.subplots()
             
@@ -23,9 +24,17 @@ class Animator:
 
             artists.append(self._get_patch_collection(graphic_model))
         
-        self._axes.set(xlim=[-1, 7], ylim=[-1, 5], xlabel='X', ylabel='Y')
+        self._axes.set(xlim=[self._param["xlim_lb"], self._param["xlim_ub"]], 
+                       ylim=[self._param["ylim_lb"], self._param["ylim_ub"]], 
+                       xlabel='X', ylabel='Y')
         
-        anim = animation.ArtistAnimation(fig=self._figure, artists=artists, interval=100)
+        self._axes.set_aspect("equal",adjustable="box")
+        
+        anim = animation.ArtistAnimation(fig=self._figure, 
+                                         artists=artists, 
+                                         interval=self._param["interval_time"], 
+                                         repeat=self._param["repeat"],
+                                         blit=True)
         
         plt.show()
         

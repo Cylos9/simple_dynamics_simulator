@@ -1,8 +1,18 @@
+step_size: 0.05
+
 num_states: 4
 num_inputs: 2
 
 length_back: 0.23
 length_front: 0.83
+
+animator_params:
+    xlim_lb: -1 #Lower bound of x axis
+    xlim_ub: 7  #Upper bound of x axis
+    ylim_lb: -1 #Lower bound of y axis
+    ylim_ub: 5  #Upper bound of y axis
+    interval_time: 5 # Delay between frames in milliseconds
+    repeat: False #Whether the animation repeats when the sequence of frames is completed
 
 graphic_model_params:
     tractor:
