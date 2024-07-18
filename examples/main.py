@@ -95,15 +95,18 @@ if __name__ == "__main__":
     
     params = get_params("params.yaml")
     
+    common_params = params["common_params"]
+    
     # Data table is expeted to have "v" and "w" column header, represents for the control input
     data = read_csv(os.path.join(package_path,"data/system_input.csv"))
-    model = TractorTrailerModel(params, 'KR1', params["step_size"])
     
+    model = TractorTrailerModel(params["model_params"])
+
     simulator = Simulator(model)
     
     animator = Animator(params["animator_params"], model)
     
-    intial_state = np.array([0., 0., 0., 0.])
+    intial_state = np.array(common_params["initial_state"])
     
     inputs =  np.vstack((np.array(data["v"]), np.array(data["w"])))
     

@@ -63,17 +63,18 @@ import casadi.casadi as cs
 
 class TractorTrailerModel(Model):
         
-    def __init__(self, model_params, discrete_method = "KR1", step_size = 0.1):
+    def __init__(self, params):
         
-        super().__init__(model_params, discrete_method, step_size)
+        super().__init__(params["standard_params"])
         
-        self._nx = model_params["num_states"]
+        self._graphic_model_params = params["graphic_model_params"]
         
-        self._nu = model_params["num_inputs"]
+        additional_params = params["additional_params"]
         
-        self._lb = model_params["length_back"]
+        self._lb = additional_params["length_back"]
         
-        self._lf = model_params["length_front"]
+        self._lf = additional_params["length_front"]
+        
         
     def dynamics(self, state, input):
         
@@ -128,11 +129,9 @@ class TractorTrailerModel(Model):
         tractor_pose = self._compute_tractor_pose(state)
         
         graphic_model = []
-        
-        graphic_model_params = self._model_params["graphic_model_params"]
  
         # Tractor       
-        tractor = graphic_model_params["tractor"]
+        tractor = self._graphic_model_params["tractor"]
         
         translation = [tractor["width"] / 4 * cs.cos(tractor_pose[2]), 
                        tractor["width"] / 4 * cs.sin(tractor_pose[2])]
@@ -142,7 +141,7 @@ class TractorTrailerModel(Model):
         graphic_model.append(Rectangle("tractor", pose, tractor["width"], tractor["height"]))
         
         # Trailer
-        trailer = graphic_model_params["trailer"]
+        trailer = self._graphic_model_params["trailer"]
 
         translation = [trailer["width"] / 4 * cs.cos(trailer_pose[2]), 
                        trailer["width"] / 4 * cs.sin(trailer_pose[2])]
@@ -152,7 +151,7 @@ class TractorTrailerModel(Model):
         graphic_model.append(Rectangle("trailer", pose, trailer["width"], trailer["height"]))
         
         # hitch_joint
-        hitch_joint  = graphic_model_params["hitch_joint"]
+        hitch_joint  = self._graphic_model_params["hitch_joint"]
         
         translation = [self._lf  * cs.cos(trailer_pose[2]),  
                        self._lf  * cs.sin(trailer_pose[2])]
@@ -162,7 +161,7 @@ class TractorTrailerModel(Model):
         graphic_model.append(Circle("hitch_joint", pose, hitch_joint["radius"]))
 
         #front_wheels
-        front_wheel = graphic_model_params["front_wheels"]
+        front_wheel = self._graphic_model_params["front_wheels"]
         
         rw_translation = [(tractor["height"]/2 + front_wheel["height"]/2) * cs.sin(tractor_pose[2]),  
                           - (tractor["height"]/2 + front_wheel["height"]/2) * cs.cos(tractor_pose[2])]
@@ -180,7 +179,7 @@ class TractorTrailerModel(Model):
 
 
         #back_wheels
-        back_wheel = graphic_model_params["back_wheels"]
+        back_wheel = self._graphic_model_params["back_wheels"]
         
         rw_translation = [(trailer["height"]/2 + back_wheel["height"]/2) * cs.sin(trailer_pose[2]),  
                           - (trailer["height"]/2 + back_wheel["height"]/2) * cs.cos(trailer_pose[2])]

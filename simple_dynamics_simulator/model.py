@@ -55,15 +55,17 @@ from abc import ABC, abstractmethod
 
 class Model(ABC):
     
-    def __init__(self, model_params, discrete_method, step_size):
+    def __init__(self, params):
         
         super().__init__()
         
-        self._model_params = model_params
+        self._nx = params["num_states"]
         
-        self._discrete_method = discrete_method
+        self._nu = params["num_inputs"]
+        
+        self._discrete_method = params["discrete_method"]
 
-        self._step_size = step_size
+        self._step_size = params["step_size"]
     
     @abstractmethod
     def dynamics(self, state, input):

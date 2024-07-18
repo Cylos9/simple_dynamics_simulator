@@ -1,10 +1,36 @@
-step_size: 0.05
+common_params:
+    initial_state: [0., 0., 0., 0.]
 
-num_states: 4
-num_inputs: 2
+model_params:
+    standard_params: #The required params for class Model
+        num_states: 4
+        num_inputs: 2
+        discrete_method: "KR1"
+        step_size: 0.05
 
-length_back: 0.23
-length_front: 0.83
+    additional_params: #Specific params for the robot
+        length_back: 0.23
+        length_front: 0.83
+
+    graphic_model_params: #Specific params for representing the robot in graphic world
+        tractor:
+            width: 0.6
+            height: 0.5
+
+        trailer:
+            width: 0.8
+            height: 0.5
+
+        hitch_joint:
+            radius: 0.05
+
+        front_wheels:
+            width: 0.2
+            height: 0.1
+        
+        back_wheels:
+            width: 0.2
+            height: 0.1
 
 animator_params:
     xlim_lb: -1 #Lower bound of x axis
@@ -14,22 +40,3 @@ animator_params:
     interval_time: 5 # Delay between frames in milliseconds
     repeat: False #Whether the animation repeats when the sequence of frames is completed
 
-graphic_model_params:
-    tractor:
-        width: 0.6
-        height: 0.5
-
-    trailer:
-        width: 0.8
-        height: 0.5
-
-    hitch_joint:
-        radius: 0.05
-
-    front_wheels:
-        width: 0.2
-        height: 0.1
-    
-    back_wheels:
-        width: 0.2
-        height: 0.1
