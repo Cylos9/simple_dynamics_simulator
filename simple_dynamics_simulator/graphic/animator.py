@@ -34,15 +34,22 @@ class Animator:
         
         for i in  range(states.shape[1]):
             
+            artist_collection = []
+            
+            # Dynamic path
+            for path_name, path_value in dynamic_path.items():
+                
+                artist_collection += self._axes.plot(path_value[0, :i], path_value[1, :i], linestyle='-', color='green', label=path_name, animated=True)
+  
+            # Robot path collection
             state = states[:,i]
             
             graphic_model = self._model.graphic_model(state)
 
-            dynamic_artists.append(self._get_patch_collection(graphic_model))
-            
-            for path_name, path_value in dynamic_path.items():
-                pass
+            artist_collection += self._get_patch_collection(graphic_model)
 
+            dynamic_artists.append(artist_collection)
+            
         return dynamic_artists
         
     def _animate(self, dynamic_artists, static_path, environment):
@@ -73,8 +80,6 @@ class Animator:
                             title='Simulation in 2D space')
                 
         self._axes.set_aspect("equal", adjustable="box")
-        
-        self._axes.legend()
         
         plt.show() 
            
@@ -110,7 +115,7 @@ class Animator:
         theta_in_deg = theta * 180 / pi 
         
         patch = Rectangle((x, y), graphic_object.width, graphic_object.height, 
-                  angle=theta_in_deg, rotation_point='center')
+                  angle=theta_in_deg, rotation_point='center', animated=True)
          
         return self._axes.add_patch(patch)
         
@@ -118,7 +123,7 @@ class Animator:
 
         x_c, y_c, _ = graphic_object.pose
          
-        patch = Circle((x_c, y_c), radius = graphic_object.radius)
+        patch = Circle((x_c, y_c), radius = graphic_object.radius, animated=True)
         
         return self._axes.add_patch(patch)
     
