@@ -5,8 +5,8 @@ model_params:
     standard_params: #The required params for class Model
         num_states: 4
         num_inputs: 2
-        discrete_method: "KR1"
-        step_size: 0.05
+        discrete_method: "KR4"
+        step_size: 0.01
 
     additional_params: #Specific params for the robot
         length_back: 0.23
@@ -37,6 +37,8 @@ animator_params:
     xlim_ub: 7  #Upper bound of x axis
     ylim_lb: -1 #Lower bound of y axis
     ylim_ub: 5  #Upper bound of y axis
-    interval_time: 5 # Delay between frames in milliseconds
+    desired_frame_rate: 20 # The desired number of frames appears within a second. 
+                           # The actual frame rate may differ from this value depending on number of available simulated states within a second
+    speed_factor: 10  # Animation will be speeded up by this value
     repeat: False #Whether the animation repeats when the sequence of frames is completed
 

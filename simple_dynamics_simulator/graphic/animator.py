@@ -10,11 +10,14 @@ class Animator:
     def __init__(self, param, model):
         self._param = param
         self._model = model
+        self._frame_rate = param["desired_frame_rate"]
         self._figure, self._axes = plt.subplots()
             
     def run(self, states):
         
         artists = []
+        
+        states = self._extract_state_for_animate(states)
         
         for i in  range(states.shape[1]):
             
@@ -30,9 +33,13 @@ class Animator:
         
         self._axes.set_aspect("equal",adjustable="box")
         
+        time_interval_between_frames = 1000 / self._frame_rate / self._param["speed_factor"] #in milisecond
+        
+        print(f"[Animator][Info] frame_rate: {self._frame_rate:.2f} fps , speed_factor: {self._param['speed_factor']}")
+        
         anim = animation.ArtistAnimation(fig=self._figure, 
                                          artists=artists, 
-                                         interval=self._param["interval_time"], 
+                                         interval=time_interval_between_frames, 
                                          repeat=self._param["repeat"],
                                          blit=True)
         
@@ -81,3 +88,22 @@ class Animator:
         patch = Circle((x_c, y_c), radius = graphic_object.radius)
         
         return self._axes.add_patch(patch)
+    
+    def _extract_state_for_animate(self, states):
+        
+        num_states_in_second = 1/self._model._step_size
+        
+        if num_states_in_second < self._param["desired_frame_rate"]:
+            print(f"[Warn] The frame rate was reduced from {self._param['desired_frame_rate']} to {num_states_in_second},",
+                f"since the number of simulated states ({num_states_in_second}) within a second is lower than required frames ({self._param['desired_frame_rate']})")
+            
+            self._frame_rate = num_states_in_second
+            
+        else:
+            extraction_ratio = int(num_states_in_second / self._param["desired_frame_rate"])
+            
+            states = states[:, 0::extraction_ratio]
+            
+            self._frame_rate = 1 / (self._model._step_size * extraction_ratio)
+            
+        return states
