@@ -164,11 +164,11 @@ class TractorTrailerModel(Model):
         #front_wheels
         front_wheel = self._graphic_model_params["front_wheels"]
         
-        rw_translation = [(tractor["height"]/2 + front_wheel["height"]/2) * cs.sin(tractor_pose[2]),  
-                          - (tractor["height"]/2 + front_wheel["height"]/2) * cs.cos(tractor_pose[2])]
+        rw_translation = [(tractor["height"]/2 + front_wheel["height"]/2 + 0.05) * cs.sin(tractor_pose[2]),  
+                          - (tractor["height"]/2 + front_wheel["height"]/2 + 0.05) * cs.cos(tractor_pose[2])]
         
-        lw_translation = [-(tractor["height"]/2 + front_wheel["height"]/2) * cs.sin(tractor_pose[2]),  
-                           (tractor["height"]/2 + front_wheel["height"]/2) * cs.cos(tractor_pose[2])]
+        lw_translation = [-(tractor["height"]/2 + front_wheel["height"]/2 + 0.05) * cs.sin(tractor_pose[2]),  
+                           (tractor["height"]/2 + front_wheel["height"]/2 + 0.05) * cs.cos(tractor_pose[2])]
         
         rw_pose = self._transform_pose(tractor_pose, rw_translation, 0.) 
         
@@ -182,11 +182,11 @@ class TractorTrailerModel(Model):
         #back_wheels
         back_wheel = self._graphic_model_params["back_wheels"]
         
-        rw_translation = [(trailer["height"]/2 + back_wheel["height"]/2) * cs.sin(trailer_pose[2]),  
-                          - (trailer["height"]/2 + back_wheel["height"]/2) * cs.cos(trailer_pose[2])]
+        rw_translation = [(trailer["height"]/2 + back_wheel["height"]/2 + 0.05) * cs.sin(trailer_pose[2]),  
+                          - (trailer["height"]/2 + back_wheel["height"]/2 + 0.05) * cs.cos(trailer_pose[2])]
         
-        lw_translation = [-(trailer["height"]/2 + back_wheel["height"]/2) * cs.sin(trailer_pose[2]),  
-                           (trailer["height"]/2 + back_wheel["height"]/2) * cs.cos(trailer_pose[2])]
+        lw_translation = [-(trailer["height"]/2 + back_wheel["height"]/2 + 0.05) * cs.sin(trailer_pose[2]),  
+                           (trailer["height"]/2 + back_wheel["height"]/2 + 0.05) * cs.cos(trailer_pose[2])]
         
         rw_pose = self._transform_pose(trailer_pose, rw_translation, 0.) 
         
