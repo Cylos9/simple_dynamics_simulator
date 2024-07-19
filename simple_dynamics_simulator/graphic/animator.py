@@ -119,7 +119,7 @@ class Animator:
         theta_in_deg = theta * 180 / pi 
         
         patch = Rectangle((x, y), graphic_object.width, graphic_object.height, 
-                  angle=theta_in_deg, rotation_point='center', animated=True)
+                  angle=theta_in_deg, rotation_point='center', color=self._param["robot_color"], animated=True)
          
         return self._axes.add_patch(patch)
         
@@ -127,7 +127,7 @@ class Animator:
 
         x_c, y_c, _ = graphic_object.pose
          
-        patch = Circle((x_c, y_c), radius = graphic_object.radius, animated=True)
+        patch = Circle((x_c, y_c), radius = graphic_object.radius,  color=self._param["robot_color"], animated=True)
         
         return self._axes.add_patch(patch)
     

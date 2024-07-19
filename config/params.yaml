@@ -48,3 +48,4 @@ animator_params:
     repeat: False #Whether the animation repeats when the sequence of frames is completed
     static_path_color: ['grey']
     dynamic_path_color: ['green','red']
+    robot_color: '#667BC6'
