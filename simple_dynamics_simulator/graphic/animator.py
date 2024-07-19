@@ -13,33 +13,40 @@ class Animator:
         self._frame_rate = param["desired_frame_rate"]
         self._figure, self._axes = plt.subplots()
             
-    def run(self, states, reference_path=None, environment=None):
+    def run(self, states, static_path={}, dynamic_path={}, environment=None):
         
-        states = self._extract_state_for_animate(states)
+        states, extraction_ratio = self._extract_state_for_animate(states)
+
+        for path_name, path_value in dynamic_path.items():
+            dynamic_path[path_name] = path_value[:, 0::extraction_ratio]
+
+        dynamic_artists = self._generate_dynamic_artists(states, dynamic_path)
         
-        robot_artists = self._generate_artists(states)
-        
-        self._animate(robot_artists, reference_path, environment)
+        self._animate(dynamic_artists, static_path, environment)
     
-    def _generate_artists(self, states):
+    def _generate_dynamic_artists(self, states, dynamic_path):
     
-        artists = []
+        dynamic_artists = []
         
         for i in  range(states.shape[1]):
+            
+            if len(dynamic_path) != 0:
+                pass
             
             state = states[:,i]
             
             graphic_model = self._model.graphic_model(state)
 
-            artists.append(self._get_patch_collection(graphic_model))
+            dynamic_artists.append(self._get_patch_collection(graphic_model))
 
-        return artists
+        return dynamic_artists
         
-    def _animate(self, robot_artists, reference_path, environment):
+    def _animate(self, dynamic_artists, static_path, environment):
+        
         # Static plot
-        if type(reference_path) != type(None):
-            
-            self._axes.plot(reference_path[0, :], reference_path[1, :], linestyle='dotted', color='grey', label='reference path')
+        if len(static_path) != 0:
+            for path_name, path_value in static_path.items():
+                self._axes.plot(path_value[0, :], path_value[1, :], linestyle='dotted', color='grey', label=path_name)
         
         if type(environment) != type(None):
             pass
@@ -50,7 +57,7 @@ class Animator:
         print(f"[Animator][Info] frame_rate: {self._frame_rate:.2f} fps , speed_factor: {self._param['speed_factor']}")
         
         anim = animation.ArtistAnimation(fig=self._figure, 
-                                        artists=robot_artists, 
+                                        artists=dynamic_artists, 
                                         interval=time_interval_between_frames, 
                                         repeat=self._param["repeat"],
                                         blit=True)
@@ -59,7 +66,7 @@ class Animator:
         self._axes.set(xlim=[self._param["xlim_lb"], self._param["xlim_ub"]], 
                             ylim=[self._param["ylim_lb"], self._param["ylim_ub"]], 
                             xlabel='X', ylabel='Y',
-                            title='Robot simulation in 2D space')
+                            title='Simulation in 2D space')
                 
         self._axes.set_aspect("equal", adjustable="box")
         
@@ -119,13 +126,15 @@ class Animator:
             print(f"[Warn] The frame rate was reduced from {self._param['desired_frame_rate']} to {num_states_in_second},",
                 f"since the number of simulated states ({num_states_in_second}) within a second is lower than required frames ({self._param['desired_frame_rate']})")
             
-            self._frame_rate = num_states_in_second
+            extraction_ratio = 1
             
+            self._frame_rate =  1/self._model._step_size
+
         else:
             extraction_ratio = int(num_states_in_second / self._param["desired_frame_rate"])
             
-            states = states[:, 0::extraction_ratio]
-            
             self._frame_rate = 1 / (self._model._step_size * extraction_ratio)
-            
-        return states
+        
+        states = states[:, 0::extraction_ratio]
+        
+        return states, extraction_ratio

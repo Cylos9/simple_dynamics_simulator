@@ -106,7 +106,7 @@ def write_csv(data, file_path):
         csvwriter.writerows(rows)
 
 if __name__ == "__main__":
-    
+    # Read params
     params = get_params("params.yaml")
     
     common_params = params["common_params"]
@@ -116,24 +116,35 @@ if __name__ == "__main__":
     
     reference_path_data = read_csv(os.path.join(package_path, "data", common_params["reference_path_filename"]))
     
+    # Initialize
     model = TractorTrailerModel(params["model_params"])
 
     simulator = Simulator(model)
     
     animator = Animator(params["animator_params"], model)
     
+    # Simulation
     intial_state = np.array(common_params["initial_state"])
     
     inputs =  np.vstack((np.array(control_input_data["v"]), np.array(control_input_data["w"])))
     
     time_axis, states, _ = simulator.run(intial_state, inputs)
     
+    # Animation
+    static_path = {"reference path":  np.array([reference_path_data["x_ref"], reference_path_data["y_ref"]])}
+    
+    dynamic_path = {"trailer trajectory": np.array([states[0], states[1]]),
+                    # "tractor trajectory": np.array([states[0], states[1]]),
+                    }
+    
     animator.run(
         states,
-        reference_path= np.array([reference_path_data["x_ref"], reference_path_data["y_ref"]]),
+        static_path=static_path,
+        dynamic_path = {},
         environment=None
         )
     
+    # Export data
     output_data = {
         "t": time_axis.tolist(),
         "v": control_input_data["v"],
