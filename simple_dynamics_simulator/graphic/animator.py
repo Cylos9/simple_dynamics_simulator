@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from math import cos, sin, pi
-from matplotlib.patches import Circle, Rectangle
 from matplotlib.collections import PatchCollection
+import matplotlib.lines as mlines
+import matplotlib.patches as mpatches
 import matplotlib.animation as animation
 
 class Animator:
@@ -18,20 +19,17 @@ class Animator:
         self._figure, self._axes = plt.subplots()
             
     def run(self, states, static_paths={}, dynamic_paths={}, environment=None):
- 
-        states, extraction_ratio = self._extract_state_for_animate(states)
-
-        for path_name, path_value in dynamic_paths.items():
-            
-            dynamic_paths[path_name] = path_value[:, 0::extraction_ratio]
-                        
-            if dynamic_paths[path_name].shape[1] != states.shape[1]:
-                print(f"[Animator][Warn] the time instances of {path_name} ({dynamic_paths[path_name].shape[1]}) is expected to equal to time instances of simulated states ({states.shape[1]})")
-            
-        dynamic_artists = self._generate_dynamic_artists(states, dynamic_paths)
         
+        states, extraction_ratio = self._truncate_state_for_animate(states)
+
+        dynamic_paths = self._truncate_dynamic_path_for_animate(dynamic_paths, extraction_ratio)
+                                   
+        dynamic_artists = self._generate_dynamic_artists(states, dynamic_paths)
+                        
+        self._configure_plot_setting(static_paths.keys(), dynamic_paths.keys())
+                          
         self._animate(dynamic_artists, static_paths, environment)
-    
+
     def _generate_dynamic_artists(self, states, dynamic_paths):
             
         dynamic_artists = []
@@ -76,15 +74,7 @@ class Animator:
                                         interval=time_interval_between_frames, 
                                         repeat=self._param["repeat"],
                                         blit=True)
-        
-        # Plot setting
-        self._axes.set(xlim=[self._param["xlim_lb"], self._param["xlim_ub"]], 
-                            ylim=[self._param["ylim_lb"], self._param["ylim_ub"]], 
-                            xlabel='X', ylabel='Y',
-                            title='Simulation in 2D space')
-                
-        self._axes.set_aspect("equal", adjustable="box")
-        
+
         plt.show() 
            
     def _get_patch_collection(self, graphic_model):
@@ -118,7 +108,7 @@ class Animator:
         
         theta_in_deg = theta * 180 / pi 
         
-        patch = Rectangle((x, y), graphic_object.width, graphic_object.height, 
+        patch = mpatches.Rectangle((x, y), graphic_object.width, graphic_object.height, 
                   angle=theta_in_deg, rotation_point='center', color=self._param["robot_color"], animated=True)
          
         return self._axes.add_patch(patch)
@@ -127,11 +117,34 @@ class Animator:
 
         x_c, y_c, _ = graphic_object.pose
          
-        patch = Circle((x_c, y_c), radius = graphic_object.radius,  color=self._param["robot_color"], animated=True)
+        patch = mpatches.Circle((x_c, y_c), radius = graphic_object.radius,  color=self._param["robot_color"], animated=True)
         
         return self._axes.add_patch(patch)
     
-    def _extract_state_for_animate(self, states):
+    def _configure_plot_setting(self, static_pathnames, dynamic_pathnames):
+                
+        # Plot setting
+        self._axes.set(xlim=[self._param["xlim_lb"], self._param["xlim_ub"]], 
+                            ylim=[self._param["ylim_lb"], self._param["ylim_ub"]], 
+                            xlabel='X', ylabel='Y',
+                            title='Simulation in 2D space')
+                
+        self._axes.set_aspect("equal", adjustable="box")
+
+        # Configure legend
+        legend_handles = []
+        
+        legend_handles.append(mpatches.Patch(color=self._param["robot_color"], label='Robot'))
+        
+        for index, path_name in enumerate(static_pathnames):
+            legend_handles.append(mlines.Line2D([], [], linestyle='--', color=self._param['static_path_color'][index], label=path_name))
+
+        for index, path_name in enumerate(dynamic_pathnames):
+            legend_handles.append(mlines.Line2D([], [], linestyle='-', color=self._param['dynamic_path_color'][index], label=path_name))
+
+        self._axes.legend(handles=legend_handles, loc="upper right")
+    
+    def _truncate_state_for_animate(self, states):
         
         num_states_in_second = 1 / self._model._step_size
         
@@ -151,3 +164,13 @@ class Animator:
         states = states[:, 0::extraction_ratio]
         
         return states, extraction_ratio
+    
+    @staticmethod
+    def _truncate_dynamic_path_for_animate(dynamic_paths, extraction_ratio):
+        
+        for path_name, path_value in dynamic_paths.items():
+            
+            dynamic_paths[path_name] = path_value[:, 0::extraction_ratio]
+            
+        return dynamic_paths
+                        

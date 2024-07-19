@@ -131,15 +131,15 @@ if __name__ == "__main__":
     time_axis, states, _ = simulator.run(intial_state, inputs)
     
     # Animation
-    static_paths = {"reference path":  np.array([reference_path_data["x_ref"], reference_path_data["y_ref"]])}
+    static_paths = {"Reference path":  np.array([reference_path_data["x_ref"], reference_path_data["y_ref"]])}
     
     tractor_state = np.zeros((3, states.shape[1]))
     
     for  index in range(states.shape[1]):
         tractor_state[:, index] =  model._compute_tractor_pose(states[:, index])
     
-    dynamic_paths = {"trailer trajectory": np.array([states[0], states[1]]),
-                    "tractor trajectory": np.array([tractor_state[0], tractor_state[1]]),
+    dynamic_paths = {"Trailer trajectory": np.array([states[0], states[1]]),
+                    "Tractor trajectory": np.array([tractor_state[0], tractor_state[1]]),
                     }
     
     animator.run(
