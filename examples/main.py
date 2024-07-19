@@ -140,7 +140,7 @@ if __name__ == "__main__":
     animator.run(
         states,
         static_path=static_path,
-        dynamic_path = {},
+        dynamic_path = dynamic_path,
         environment=None
         )
     

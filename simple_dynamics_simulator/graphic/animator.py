@@ -18,26 +18,30 @@ class Animator:
         states, extraction_ratio = self._extract_state_for_animate(states)
 
         for path_name, path_value in dynamic_path.items():
+            
             dynamic_path[path_name] = path_value[:, 0::extraction_ratio]
-
+                        
+            if dynamic_path[path_name].shape[1] != states.shape[1]:
+                print(f"[Animator][Warn] the time instances of {path_name} ({ dynamic_path[path_name].shape[1]}) is expected to equal to time instances of simulated states ({states.shape[1]})")
+            
         dynamic_artists = self._generate_dynamic_artists(states, dynamic_path)
         
         self._animate(dynamic_artists, static_path, environment)
     
     def _generate_dynamic_artists(self, states, dynamic_path):
-    
+            
         dynamic_artists = []
         
         for i in  range(states.shape[1]):
-            
-            if len(dynamic_path) != 0:
-                pass
             
             state = states[:,i]
             
             graphic_model = self._model.graphic_model(state)
 
             dynamic_artists.append(self._get_patch_collection(graphic_model))
+            
+            for path_name, path_value in dynamic_path.items():
+                pass
 
         return dynamic_artists
         
