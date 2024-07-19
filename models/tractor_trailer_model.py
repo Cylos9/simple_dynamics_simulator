@@ -57,9 +57,11 @@ import math
 from copy import deepcopy
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import casadi.casadi as cs
+import numpy as np
 from simple_dynamics_simulator.model import Model
 from simple_dynamics_simulator.graphic.graphic_object import Rectangle, Circle
-import casadi.casadi as cs
+
 
 class TractorTrailerModel(Model):
         
@@ -79,8 +81,7 @@ class TractorTrailerModel(Model):
     def dynamics(self, state, input):
         
         if len(state) != self._nx or len(input) != self._nu:
-            print("[WARN] Number of states or inputs is not matched.")
-            return
+            raise Exception("Failed to compute dynamics. The size of input arguments is not matched with the size of state or control input")
         
         v1, w1 = input
         
@@ -120,7 +121,7 @@ class TractorTrailerModel(Model):
             
             state_dot = [x2_dot, y2_dot, theta2_dot, gamma_dot]
             
-        return  state_dot
+        return  np.asarray(state_dot)
 
     def graphic_model(self, state):
 
@@ -200,7 +201,7 @@ class TractorTrailerModel(Model):
     def _compute_tractor_pose(self, state):
         
         if len(state) != 4:
-            return
+            raise Exception("Failed to compute tractor pose. The size of state is expected to be equal to 4")
         
         x2, y2, theta2, gamma = state
         
@@ -210,7 +211,7 @@ class TractorTrailerModel(Model):
         
         y1 = y2 + self._lf * cs.sin(theta2) + self._lb * cs.sin(theta1)
 
-        return [x1, y1, theta1]
+        return np.asarray([x1, y1, theta1])
     
 
     def _transform_pose(self, pose, translation, rotate_angle, degree=False):

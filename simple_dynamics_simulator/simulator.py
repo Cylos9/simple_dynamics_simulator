@@ -64,6 +64,8 @@ class Simulator:
         
     def run(self, intial_state, inputs):
 
+        intial_state = np.asarray(intial_state)
+        
         intial_state.reshape(self._model._nx, 1)
         
         if inputs.shape[0] != self._model._nu:
@@ -79,8 +81,8 @@ class Simulator:
         time_axis = np.linspace(0, steps * self._model._step_size, num=steps+1)
         
         for i in range(steps):
-            states[:, i+1] = self._model.step(states[:, i].tolist(), 
-                                               inputs[:, i].tolist())
+            states[:, i+1] = self._model.step(states[:, i], 
+                                               inputs[:, i])
             
         inputs = np.hstack((inputs, np.zeros((self._model._nu, 1))))
         

@@ -52,6 +52,7 @@ License:
 """
 
 from abc import ABC, abstractmethod
+import numpy as np
 
 class Model(ABC):
     
@@ -76,17 +77,30 @@ class Model(ABC):
         pass
         
     def step(self, state, input):
-            
-        state_dot = self.dynamics(state, input)
 
+        state = np.asarray(state)
+        
+        input = np.asarray(input)
+        
         if self._discrete_method == "KR1":
             
-            for i in range(len(state)):
+            state_dot = self.dynamics(state, input)
                 
-                state[i] += self._step_size * state_dot[i]
+            state += self._step_size * state_dot
         
         elif self._discrete_method == "KR4":
             
-            pass
+            k1 = self.dynamics(state, input)
+            
+            k2 = self.dynamics(state + 1/2*self._step_size*k1, input)
+            
+            k3 = self.dynamics(state + 1/2*self._step_size*k2, input)
+            
+            k4 = self.dynamics(state + self._step_size*k3, input)
+
+            state += 1/6 * self._step_size * (k1 + 2*k2 + 2*k3 + k4)
+            
+        else:
+            raise Exception(f"The discrete method '{self._discrete_method}' has not supported")
         
         return state
