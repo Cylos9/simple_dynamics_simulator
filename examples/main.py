@@ -91,6 +91,20 @@ def read_csv(file_path):
     
     return data
 
+def write_csv(data, file_path):
+    
+    headers = data.keys()
+    
+    rows = zip(*output_data.values())
+    
+    with open(file_path, 'w', newline='') as csvfile:
+        
+        csvwriter = csv.writer(csvfile)
+        
+        csvwriter.writerow(headers)
+        
+        csvwriter.writerows(rows)
+
 if __name__ == "__main__":
     
     params = get_params("params.yaml")
@@ -98,7 +112,9 @@ if __name__ == "__main__":
     common_params = params["common_params"]
     
     # Data table is expeted to have "v" and "w" column header, represents for the control input
-    data = read_csv(os.path.join(package_path,"data/system_input.csv"))
+    control_input_data = read_csv(os.path.join(package_path, "data", common_params["system_input_filename"]))
+    
+    reference_path_data = read_csv(os.path.join(package_path, "data", common_params["reference_path_filename"]))
     
     model = TractorTrailerModel(params["model_params"])
 
@@ -108,8 +124,28 @@ if __name__ == "__main__":
     
     intial_state = np.array(common_params["initial_state"])
     
-    inputs =  np.vstack((np.array(data["v"]), np.array(data["w"])))
+    inputs =  np.vstack((np.array(control_input_data["v"]), np.array(control_input_data["w"])))
     
     time_axis, states, _ = simulator.run(intial_state, inputs)
     
-    animator.run(states)
+    animator.run(
+        states,
+        reference_path= np.array([reference_path_data["x_ref"], reference_path_data["y_ref"]]),
+        environment=None
+        )
+    
+    output_data = {
+        "t": time_axis.tolist(),
+        "v": control_input_data["v"],
+        "w": control_input_data["w"],
+        "x2": states[0],
+        "y2": states[1],
+        "theta2": states[2],
+        "gamma": states[3],
+        "x_ref": reference_path_data["x_ref"],
+        "y_ref": reference_path_data["y_ref"]
+    }
+    
+    file_path = os.path.join(package_path, "data", common_params["output_filename"])
+    
+    write_csv(output_data, file_path)

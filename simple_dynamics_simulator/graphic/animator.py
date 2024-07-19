@@ -13,11 +13,17 @@ class Animator:
         self._frame_rate = param["desired_frame_rate"]
         self._figure, self._axes = plt.subplots()
             
-    def run(self, states):
-        
-        artists = []
+    def run(self, states, reference_path=None, environment=None):
         
         states = self._extract_state_for_animate(states)
+        
+        robot_artists = self._generate_artists(states)
+        
+        self._animate(robot_artists, reference_path, environment)
+    
+    def _generate_artists(self, states):
+    
+        artists = []
         
         for i in  range(states.shape[1]):
             
@@ -26,25 +32,41 @@ class Animator:
             graphic_model = self._model.graphic_model(state)
 
             artists.append(self._get_patch_collection(graphic_model))
+
+        return artists
         
-        self._axes.set(xlim=[self._param["xlim_lb"], self._param["xlim_ub"]], 
-                       ylim=[self._param["ylim_lb"], self._param["ylim_ub"]], 
-                       xlabel='X', ylabel='Y')
+    def _animate(self, robot_artists, reference_path, environment):
+        # Static plot
+        if type(reference_path) != type(None):
+            
+            self._axes.plot(reference_path[0, :], reference_path[1, :], linestyle='dotted', color='grey', label='reference path')
         
-        self._axes.set_aspect("equal",adjustable="box")
+        if type(environment) != type(None):
+            pass
         
+        # Dynamic plot
         time_interval_between_frames = 1000 / self._frame_rate / self._param["speed_factor"] #in milisecond
         
         print(f"[Animator][Info] frame_rate: {self._frame_rate:.2f} fps , speed_factor: {self._param['speed_factor']}")
         
         anim = animation.ArtistAnimation(fig=self._figure, 
-                                         artists=artists, 
-                                         interval=time_interval_between_frames, 
-                                         repeat=self._param["repeat"],
-                                         blit=True)
+                                        artists=robot_artists, 
+                                        interval=time_interval_between_frames, 
+                                        repeat=self._param["repeat"],
+                                        blit=True)
         
-        plt.show()
+        # Plot setting
+        self._axes.set(xlim=[self._param["xlim_lb"], self._param["xlim_ub"]], 
+                            ylim=[self._param["ylim_lb"], self._param["ylim_ub"]], 
+                            xlabel='X', ylabel='Y',
+                            title='Robot simulation in 2D space')
+                
+        self._axes.set_aspect("equal", adjustable="box")
         
+        self._axes.legend()
+        
+        plt.show() 
+           
     def _get_patch_collection(self, graphic_model):
         
         patches = []

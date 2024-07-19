@@ -1,12 +1,17 @@
 common_params:
     initial_state: [0., 0., 0., 0.]
-
+    
+    # the below files is exptected to be stored in /data folder of this package
+    system_input_filename: "system_input.csv"
+    reference_path_filename: "reference_path.csv"
+    output_filename: "output.csv"
+    
 model_params:
     standard_params: #The required params for class Model
         num_states: 4
         num_inputs: 2
         discrete_method: "KR4"
-        step_size: 0.01
+        step_size: 0.05
 
     additional_params: #Specific params for the robot
         length_back: 0.23
