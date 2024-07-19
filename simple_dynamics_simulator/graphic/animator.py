@@ -8,27 +8,31 @@ import matplotlib.animation as animation
 class Animator:
     
     def __init__(self, param, model):
+        
         self._param = param
+        
         self._model = model
+        
         self._frame_rate = param["desired_frame_rate"]
+        
         self._figure, self._axes = plt.subplots()
             
-    def run(self, states, static_path={}, dynamic_path={}, environment=None):
-        
+    def run(self, states, static_paths={}, dynamic_paths={}, environment=None):
+ 
         states, extraction_ratio = self._extract_state_for_animate(states)
 
-        for path_name, path_value in dynamic_path.items():
+        for path_name, path_value in dynamic_paths.items():
             
-            dynamic_path[path_name] = path_value[:, 0::extraction_ratio]
+            dynamic_paths[path_name] = path_value[:, 0::extraction_ratio]
                         
-            if dynamic_path[path_name].shape[1] != states.shape[1]:
-                print(f"[Animator][Warn] the time instances of {path_name} ({ dynamic_path[path_name].shape[1]}) is expected to equal to time instances of simulated states ({states.shape[1]})")
+            if dynamic_paths[path_name].shape[1] != states.shape[1]:
+                print(f"[Animator][Warn] the time instances of {path_name} ({dynamic_paths[path_name].shape[1]}) is expected to equal to time instances of simulated states ({states.shape[1]})")
             
-        dynamic_artists = self._generate_dynamic_artists(states, dynamic_path)
+        dynamic_artists = self._generate_dynamic_artists(states, dynamic_paths)
         
-        self._animate(dynamic_artists, static_path, environment)
+        self._animate(dynamic_artists, static_paths, environment)
     
-    def _generate_dynamic_artists(self, states, dynamic_path):
+    def _generate_dynamic_artists(self, states, dynamic_paths):
             
         dynamic_artists = []
         
@@ -37,9 +41,9 @@ class Animator:
             artist_collection = []
             
             # Dynamic path
-            for path_name, path_value in dynamic_path.items():
+            for index, (path_name, path_value) in enumerate(dynamic_paths.items()):
                 
-                artist_collection += self._axes.plot(path_value[0, :i], path_value[1, :i], linestyle='-', color='green', label=path_name, animated=True)
+                artist_collection += self._axes.plot(path_value[0, :i], path_value[1, :i], linestyle='--', color=self._param['dynamic_path_color'][index], label=path_name, animated=True)
   
             # Robot path collection
             state = states[:,i]
@@ -52,13 +56,13 @@ class Animator:
             
         return dynamic_artists
         
-    def _animate(self, dynamic_artists, static_path, environment):
+    def _animate(self, dynamic_artists, static_paths, environment):
         
         # Static plot
-        if len(static_path) != 0:
-            for path_name, path_value in static_path.items():
-                self._axes.plot(path_value[0, :], path_value[1, :], linestyle='dotted', color='grey', label=path_name)
-        
+        for index, (path_name, path_value) in enumerate(static_paths.items()):
+            
+            self._axes.plot(path_value[0, :], path_value[1, :], linestyle='dotted', color=self._param['static_path_color'][index], label=path_name)
+            
         if type(environment) != type(None):
             pass
         
@@ -129,7 +133,7 @@ class Animator:
     
     def _extract_state_for_animate(self, states):
         
-        num_states_in_second = 1/self._model._step_size
+        num_states_in_second = 1 / self._model._step_size
         
         if num_states_in_second < self._param["desired_frame_rate"]:
             print(f"[Warn] The frame rate was reduced from {self._param['desired_frame_rate']} to {num_states_in_second},",
@@ -137,7 +141,7 @@ class Animator:
             
             extraction_ratio = 1
             
-            self._frame_rate =  1/self._model._step_size
+            self._frame_rate =  1 / self._model._step_size
 
         else:
             extraction_ratio = int(num_states_in_second / self._param["desired_frame_rate"])

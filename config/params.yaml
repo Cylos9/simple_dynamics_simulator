@@ -46,4 +46,5 @@ animator_params:
                            # The actual frame rate may differ from this value depending on number of available simulated states within a second
     speed_factor: 10  # Animation will be speeded up by this value
     repeat: False #Whether the animation repeats when the sequence of frames is completed
-
+    static_path_color: ['grey']
+    dynamic_path_color: ['green','red']
