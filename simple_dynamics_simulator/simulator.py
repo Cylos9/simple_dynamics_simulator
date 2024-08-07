@@ -2,16 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-File: main.py
+File: simulator.py
 
 Description:
-    This script performs data analysis on a given dataset. It includes functions to load the data,
-    preprocess it, and generate various statistical summaries and visualizations.
-
-Usage:
-    To run this script, use the following command:
-        python example.py <inputs_file>
-    where <inputs_file> is the path to the dataset you want to analyze.
+    This script defines the Simulator class, which is used to simulate the dynamics of a system using a dynamical model.
 
 Author:
     Loc Dang 

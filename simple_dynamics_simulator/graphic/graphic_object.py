@@ -2,16 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-File: main.py
+File: graphic_object.py
 
 Description:
-    This script performs data analysis on a given dataset. It includes functions to load the data,
-    preprocess it, and generate various statistical summaries and visualizations.
-
-Usage:
-    To run this script, use the following command:
-        python example.py <input_file>
-    where <input_file> is the path to the dataset you want to analyze.
+    This script defines the Rectangle, Circle, and Polygon classes, which are used to represent graphic objects in the simulation.
 
 Author:
     Loc Dang 

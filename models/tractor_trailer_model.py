@@ -2,17 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-File: main.py
+File: tractor_trailer_model.py
 
 Description:
-    This script performs data analysis on a given dataset. It includes functions to load the data,
-    preprocess it, and generate various statistical summaries and visualizations.
-
-Usage:
-    To run this script, use the following command:
-        python example.py <input_file>
-    where <input_file> is the path to the dataset you want to analyze.
-
+    This script defines the tractor-trailer model, which is a subclass of the Model class. 
+    The tractor-trailer model is used to simulate the motion of a tractor-trailer system.
+    
 Author:
     Loc Dang 
 

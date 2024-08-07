@@ -2,16 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-File: main.py
+File: model.py
 
 Description:
-    This script performs data analysis on a given dataset. It includes functions to load the data,
-    preprocess it, and generate various statistical summaries and visualizations.
-
-Usage:
-    To run this script, use the following command:
-        python example.py <input_file>
-    where <input_file> is the path to the dataset you want to analyze.
+    This script defines the Model class, which is an abstract class that represents the dynamical model of a system. 
+    The Model class provides the basic structure for implementing a dynamical model, including the dynamics function and the step function.
 
 Author:
     Loc Dang 
