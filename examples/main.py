@@ -5,13 +5,7 @@
 File: main.py
 
 Description:
-    This script performs data analysis on a given dataset. It includes functions to load the data,
-    preprocess it, and generate various statistical summaries and visualizations.
-
-Usage:
-    To run this script, use the following command:
-        python example.py <input_file>
-    where <input_file> is the path to the dataset you want to analyze.
+    This script demonstrates how to use the tractor-trailer model to simulate the motion of a tractor-trailer system.
 
 Author:
     Loc Dang 
@@ -56,22 +50,30 @@ import yaml
 import csv
 import numpy as np
 
-package_path = os.path.join(os.path.dirname(__file__), '..')
-sys.path.append(os.path.abspath(package_path))
+PACKAGE_PATH = os.path.join(os.path.dirname(__file__), '..')
+sys.path.append(os.path.abspath(PACKAGE_PATH))
 
 from models.tractor_trailer_model import TractorTrailerModel
 from simple_dynamics_simulator.simulator import Simulator
 from simple_dynamics_simulator.graphic.animator import Animator
 
-def get_params(file_name, config_path=None):
+def load_params(file_name, config_path=None):
     
     if config_path == None: 
-        config_path = os.path.join(package_path, "config")
+        config_path = os.path.join(PACKAGE_PATH, "config")
     
     with open(os.path.join( config_path, file_name), "r") as file:
         params = yaml.safe_load(file)
+    
+    common_params = params["common_params"]
         
-    return params
+    model_params = params["model_params"]
+
+    animator_params = params["animator_params"]
+    
+    print("Successfully loaded parameters")
+    
+    return common_params, model_params, animator_params
 
 def read_csv(file_path):
 
@@ -105,38 +107,63 @@ def write_csv(data, file_path):
         
         csvwriter.writerows(rows)
 
-if __name__ == "__main__":
-    # Read params
-    params = get_params("params.yaml")
+def load_reference_path(common_params):
     
-    common_params = params["common_params"]
+    reference_path_data = read_csv(os.path.join(PACKAGE_PATH, common_params["data_folder"], common_params["reference_path_filename"]))
     
-    # Data table is expeted to have "v" and "w" column header, represents for the control input
-    control_input_data = read_csv(os.path.join(package_path, "data", common_params["system_input_filename"]))
-    
-    reference_path_data = read_csv(os.path.join(package_path, "data", common_params["reference_path_filename"]))
-    
-    # Initialize
-    model = TractorTrailerModel(params["model_params"])
+    reference_path = np.zeros((len(common_params["reference_path_names"]), len(reference_path_data[common_params["reference_path_names"][0]])))
 
-    simulator = Simulator(model)
+    for i, state_name in enumerate(common_params["reference_path_names"]):
+        reference_path[i] = np.array(reference_path_data[state_name])
     
-    animator = Animator(params["animator_params"], model)
+    print("Successfully loaded reference path")
+
+    return reference_path
+
+def load_system_input(common_params):
+    system_input_data = read_csv(os.path.join(PACKAGE_PATH, common_params["data_folder"], common_params["system_input_filename"]))
     
-    # Simulation
-    intial_state = np.array(common_params["initial_state"])
+    system_input = np.zeros((len(common_params["system_input_names"]), len(system_input_data[common_params["system_input_names"][0]])))
+
+    for i, input_name in enumerate(common_params["system_input_names"]):
+        system_input[i] = np.array(system_input_data[input_name])
     
-    inputs =  np.vstack((np.array(control_input_data["v"]), np.array(control_input_data["w"])))
-    
-    time_axis, states, _ = simulator.run(intial_state, inputs)
-    
-    # Animation
-    static_paths = {"Reference path":  np.array([reference_path_data["x_ref"], reference_path_data["y_ref"]])}
-    
+    print("Successfully loaded system input")
+        
+    return system_input
+
+def compute_tractor_state(states):
     tractor_state = np.zeros((3, states.shape[1]))
     
     for  index in range(states.shape[1]):
         tractor_state[:, index] =  model._compute_tractor_pose(states[:, index])
+    
+    return tractor_state
+
+if __name__ == "__main__":
+    # Read params and data
+    common_params, model_params, animator_params = load_params("params.yaml")
+    
+    reference_path = load_reference_path(common_params)
+    
+    control_input = load_system_input(common_params)
+    
+    # Initialize
+    model = TractorTrailerModel(model_params)
+
+    simulator = Simulator(model)
+    
+    animator = Animator(animator_params, model)
+    
+    # Simulation
+    intial_state = np.array(common_params["initial_state"])
+    
+    time_axis, states, _ = simulator.run(intial_state, control_input)
+    
+    # Animation
+    static_paths = {"Reference path": reference_path}
+    
+    tractor_state = compute_tractor_state(states)
     
     dynamic_paths = {"Trailer trajectory": np.array([states[0], states[1]]),
                     "Tractor trajectory": np.array([tractor_state[0], tractor_state[1]]),
@@ -151,17 +178,20 @@ if __name__ == "__main__":
     
     # Export data
     output_data = {
-        "t": time_axis.tolist(),
-        "v": control_input_data["v"],
-        "w": control_input_data["w"],
+        "t": time_axis,
+        "x1": tractor_state[0],
+        "y1": tractor_state[1],
+        "theta1": tractor_state[2],
         "x2": states[0],
         "y2": states[1],
         "theta2": states[2],
         "gamma": states[3],
-        "x_ref": reference_path_data["x_ref"],
-        "y_ref": reference_path_data["y_ref"]
+        "v": control_input[0],
+        "w": control_input[1],
+        "x_ref": reference_path[0],
+        "y_ref": reference_path[1],
     }
     
-    file_path = os.path.join(package_path, "data", common_params["output_filename"])
+    file_path = os.path.join(PACKAGE_PATH, common_params["data_folder"], common_params["output_filename"])
     
     write_csv(output_data, file_path)
