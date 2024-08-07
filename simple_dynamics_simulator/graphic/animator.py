@@ -147,7 +147,9 @@ class Animator:
     def _generate_rectangle_patch(self, graphic_object):
         
         #compute anchor point
-        x_c, y_c, theta = graphic_object.pose
+        x_c, y_c = graphic_object.center
+        
+        theta = graphic_object.rotate_angle
         
         x = x_c - graphic_object.width / 2 
         
@@ -162,7 +164,7 @@ class Animator:
         
     def _generate_circle_patch(self, graphic_object):
 
-        x_c, y_c, _ = graphic_object.pose
+        x_c, y_c = graphic_object.center
          
         patch = mpatches.Circle((x_c, y_c), radius = graphic_object.radius,  color=self._param["robot_color"], animated=True)
         
