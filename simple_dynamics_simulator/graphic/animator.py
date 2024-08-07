@@ -41,7 +41,7 @@ class Animator:
             # Dynamic path
             for index, (path_name, path_value) in enumerate(dynamic_paths.items()):
                 
-                artist_collection += self._axes.plot(path_value[0, :i], path_value[1, :i], linestyle='--', color=self._param['dynamic_path_color'][index], label=path_name, animated=True)
+                artist_collection += self._axes.plot(path_value[0, :i], path_value[1, :i], linestyle='-', color=self._param['dynamic_path_color'][index], label=path_name, animated=True)
   
             # Robot path collection
             state = states[:,i]
