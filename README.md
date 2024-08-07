@@ -1,5 +1,9 @@
 
-This package provide a simple framework for defining dynamic models, simulating with control inputs, and visualizing the simulation result in both graphs and animation. The package is designed to be simple and easy to use, and it is suitable for educational purposes. An example of a tractor trailer model is provided.
+# Simple Dynamic Model Simulator
+
+This package offers a simple framework for defining dynamic models, simulating them with control inputs using the Fourth-order Runge Kutta method, and visualizing the simulation results through graphs and animations. It is designed to be user-friendly and is ideal for educational purposes.
+
+> An example of a tractor trailer model is provided.
 
 ![hardware configuration](images/tractor_trailer_demo.gif)
 
