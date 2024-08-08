@@ -56,10 +56,10 @@ model_params:
                 alpha: 1.0
 
 animator_params:
-    xlim_lb: -1                         #Lower bound of x axis
-    xlim_ub: 8                          #Upper bound of x axis
-    ylim_lb: -1                         #Lower bound of y axis
-    ylim_ub: 6                          #Upper bound of y axis
+    xlim_lb: -2.                        #Lower bound of x axis
+    xlim_ub: 8.                         #Upper bound of x axis
+    ylim_lb: -1.                        #Lower bound of y axis
+    ylim_ub: 7.                         #Upper bound of y axis
     desired_frame_rate: 20              # The desired number of frames appears within a second. 
                                         # The actual frame rate may differ from this value depending on number of available simulated states within a second
     speed_factor: 5                     # Animation will be speeded up by this value

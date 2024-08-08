@@ -142,11 +142,20 @@ class Animator:
                 
                 patches.append(self._generate_circle_patch(graphic_object, animated=animated))
 
+            elif graphic_object.type == "polygon":
+                    
+                patches.append(self._generate_polygon_patch(graphic_object, animated=animated))
+                
             else:
-                print("[animator][Warning] '{graphic_object.type}' is not defined")
+                raise Exception(f"[animator][Error] '{graphic_object.type}' is not defined")
                 
         return patches
     
+    def _generate_polygon_patch(self, graphic_object, animated=False):
+        
+        polygon = mpatches.Polygon(graphic_object.vertices, animated=animated, **graphic_object.params)
+        
+        return self._axes.add_patch(polygon)
     
     def _generate_rectangle_patch(self, graphic_object, animated=False):
         

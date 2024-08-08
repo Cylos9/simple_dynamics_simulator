@@ -105,6 +105,9 @@ def generate_graphic_objects(object_list):
         elif object_type == "polygon":
             object = Polygon(object_list["name"], object_list["vertices"], object_list["params"])
         
+        else:
+            raise Exception("Failed to generate graphic object. The object type is not supported. Please use 'rectangle', 'circle', or 'polygon'")
+        
         graphic_objects.append(object)
             
     return graphic_objects
