@@ -65,11 +65,12 @@ class Animator:
         
         self._figure, self._axes = plt.subplots()
             
-    def run(self, states, static_paths={}, dynamic_paths={}, environment=None):
+    def run(self, states, static_paths={}, dynamic_paths={}, environment=[]):
         
         states, extraction_ratio = self._truncate_state_for_animate(states)
 
-        dynamic_paths = self._truncate_dynamic_path_for_animate(dynamic_paths, extraction_ratio)
+        if len(dynamic_paths) > 0:
+            dynamic_paths = self._truncate_dynamic_path_for_animate(dynamic_paths, extraction_ratio)
                                    
         dynamic_artists = self._generate_dynamic_artists(states, dynamic_paths)
                         
@@ -95,7 +96,7 @@ class Animator:
             
             graphic_model = self._model.graphic_model(state)
 
-            artist_collection += self._get_patch_collection(graphic_model)
+            artist_collection += self._get_patch_collection(graphic_model, animated=True)
 
             dynamic_artists.append(artist_collection)
             
@@ -105,11 +106,14 @@ class Animator:
         
         # Static plot
         for index, (path_name, path_value) in enumerate(static_paths.items()):
-            
+
             self._axes.plot(path_value[0, :], path_value[1, :], linestyle='dotted', color=self._param['static_path_color'][index], label=path_name)
+        
             
-        if type(environment) != type(None):
-            pass
+        patch_collection = self._get_patch_collection(environment, animated=False)
+        print(f"[Animator][Info] Number of environment objects: {len(patch_collection)}")
+        for patch in patch_collection:
+            self._axes.add_patch(patch)
         
         # Dynamic plot
         time_interval_between_frames = 1000 / self._frame_rate / self._param["speed_factor"] #in milisecond
@@ -124,19 +128,19 @@ class Animator:
 
         plt.show() 
            
-    def _get_patch_collection(self, graphic_model):
+    def _get_patch_collection(self, graphic_object_list, animated=False):
         
         patches = []
 
-        for graphic_object in graphic_model:
+        for graphic_object in graphic_object_list:
             
             if graphic_object.type == "rectangle":
                 
-                patches.append(self._generate_rectangle_patch(graphic_object))
+                patches.append(self._generate_rectangle_patch(graphic_object, animated=animated))
 
             elif graphic_object.type == "circle":
                 
-                patches.append(self._generate_circle_patch(graphic_object))
+                patches.append(self._generate_circle_patch(graphic_object, animated=animated))
 
             else:
                 print("[animator][Warning] '{graphic_object.type}' is not defined")
@@ -144,7 +148,7 @@ class Animator:
         return patches
     
     
-    def _generate_rectangle_patch(self, graphic_object):
+    def _generate_rectangle_patch(self, graphic_object, animated=False):
         
         #compute anchor point
         x_c, y_c = graphic_object.center
@@ -158,15 +162,15 @@ class Animator:
         theta_in_deg = theta * 180 / pi 
 
         patch = mpatches.Rectangle((x, y), graphic_object.width, graphic_object.height, 
-                  angle=theta_in_deg, rotation_point='center', animated=True, **graphic_object.params)
+                  angle=theta_in_deg, rotation_point='center', animated=animated, **graphic_object.params)
          
         return self._axes.add_patch(patch)
         
-    def _generate_circle_patch(self, graphic_object):
+    def _generate_circle_patch(self, graphic_object, animated=False):
 
         x_c, y_c = graphic_object.center
          
-        patch = mpatches.Circle((x_c, y_c), radius = graphic_object.radius, animated=True, **graphic_object.params)
+        patch = mpatches.Circle((x_c, y_c), radius = graphic_object.radius, animated=animated, **graphic_object.params)
         
         return self._axes.add_patch(patch)
     
