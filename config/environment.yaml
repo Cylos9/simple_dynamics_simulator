@@ -1,0 +1,19 @@
+- name: 'boundary'
+  type: 'rectangle'
+  center: [5., 5.]
+  width: 2.
+  height: 2.
+  rotate_angle: 0.
+  params:
+    color: "red"
+
+- name: 'obstacle'
+  type: 'circle'
+  center: [2., 2.]
+  radius: 1.
+  params:
+    color: "blue"
+
+# - type: 'polygon'
+#   vertices: [[7., 2.], [8., 3.], [7., 4.], [6., 3.]]
+
