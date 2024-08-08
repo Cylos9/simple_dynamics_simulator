@@ -5,7 +5,7 @@ This package offers a simple framework for defining dynamic models, simulating t
 
 > An example of a tractor trailer model is provided.
 
-![hardware configuration](images/tractor_trailer_demo.gif)
+![hardware configuration](images/tractor_trailer_navigation_demo.gif)
 
 ## Enviroments
 This module was tested with Python 3.9.
