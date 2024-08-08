@@ -1,0 +1,21 @@
+- name: 'boundary'
+  type: 'polygon'
+  vertices: [[-1., -0.5], [7., -0.5], [7., 5.], [-1., 5.]]
+  params:
+    fill: False
+    color: "black"
+    # thickness: 0.1
+
+
+- name: 'obstacle1'
+  type: 'circle'
+  center: [5., 1.]
+  radius: 0.6
+  params:
+    color: "grey"
+
+- name: 'obstacle2'
+  type: 'polygon'
+  vertices: [[1.5, 2.5], [2.5, 2.5], [3, 3], [2.5, 3.5], [1.5, 3.5], [1, 3]]
+  params:
+    color: "grey"

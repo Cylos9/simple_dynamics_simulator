@@ -48,33 +48,28 @@ License:
 
 class Rectangle:
     
-    def __init__(self, name, pose, width, height, params={}):
-        
+    def __init__(self, name, center, width, height, rotate_angle=0, params={}):
         self.name = name
-        
-        self.pose = pose
-        
+        self.center = center
         self.width = width
-        
         self.height = height
-        
+        self.rotate_angle = rotate_angle
         self.params = params
-        
         self.type = "rectangle"
 
 class Circle:
     
-    def __init__(self, name, pose, radius, params={}):
-    
+    def __init__(self, name, center, radius, params={}):
         self.name = name
-        
-        self.pose = pose
-        
+        self.center = center
         self.radius = radius
-        
         self.params = params
-
         self.type = "circle"
         
 class Polygon:
-    pass
+        
+    def __init__(self, name, vertices, params={}):
+        self.name = name
+        self.vertices = vertices
+        self.params = params
+        self.type = "polygon"

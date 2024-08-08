@@ -56,14 +56,14 @@ sys.path.append(os.path.abspath(PACKAGE_PATH))
 from models.tractor_trailer_model import TractorTrailerModel
 from simple_dynamics_simulator.simulator import Simulator
 from simple_dynamics_simulator.graphic.animator import Animator
+from simple_dynamics_simulator.graphic.graphic_object import Rectangle, Circle, Polygon
 
 def load_params(file_name, config_path=None):
     
     if config_path == None: 
         config_path = os.path.join(PACKAGE_PATH, "config")
-    
-    with open(os.path.join( config_path, file_name), "r") as file:
-        params = yaml.safe_load(file)
+
+    params = read_yaml(os.path.join(config_path, file_name)) 
     
     common_params = params["common_params"]
         
@@ -74,6 +74,50 @@ def load_params(file_name, config_path=None):
     print("Successfully loaded parameters")
     
     return common_params, model_params, animator_params
+
+def load_environment(file_name, config_path=None):
+    
+    if config_path == None: 
+        config_path = os.path.join(PACKAGE_PATH, "config")
+
+    object_list = read_yaml(os.path.join(config_path, file_name)) 
+    
+    environemnt = generate_graphic_objects(object_list)
+    
+    print("Successfully loaded environment")
+    
+    return environemnt
+
+def generate_graphic_objects(object_list):
+    
+    graphic_objects = []
+    
+    for object_list in object_list:
+        
+        object_type = object_list["type"]
+        
+        if object_type == "rectangle":
+            object = Rectangle(object_list["name"], object_list["center"], object_list["width"], object_list["height"], object_list["rotate_angle"], object_list["params"])
+        
+        elif object_type == "circle":
+            object = Circle(object_list["name"], object_list["center"], object_list["radius"], object_list["params"])
+        
+        elif object_type == "polygon":
+            object = Polygon(object_list["name"], object_list["vertices"], object_list["params"])
+        
+        else:
+            raise Exception("Failed to generate graphic object. The object type is not supported. Please use 'rectangle', 'circle', or 'polygon'")
+        
+        graphic_objects.append(object)
+            
+    return graphic_objects
+    
+def read_yaml(file_path):
+    
+    with open(file_path, "r") as file:
+        data = yaml.safe_load(file)    
+    
+    return data
 
 def read_csv(file_path):
 
@@ -144,6 +188,8 @@ if __name__ == "__main__":
     # Read params and data
     common_params, model_params, animator_params = load_params("params.yaml")
     
+    environment = load_environment("environment.yaml")
+
     reference_path = load_reference_path(common_params)
     
     control_input = load_system_input(common_params)
@@ -173,7 +219,7 @@ if __name__ == "__main__":
         states,
         static_paths=static_paths,
         dynamic_paths=dynamic_paths,
-        environment=None
+        environment=environment
         )
     
     # Export data
