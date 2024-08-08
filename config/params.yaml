@@ -24,21 +24,36 @@ model_params:
         tractor:
             width: 0.6
             height: 0.5
+            params:
+                color: '#667BC6'
+                alpha: 1.0
 
         trailer:
             width: 0.8
             height: 0.5
+            params:
+                color: '#667BC6'
+                alpha: 1.0
 
         hitch_joint:
             radius: 0.05
+            params:
+                color: '#667BC6'
+                alpha: 1.0
 
         front_wheels:
             width: 0.2
             height: 0.1
-        
+            params:
+                color: '#667BC6'
+                alpha: 1.0
+
         back_wheels:
             width: 0.2
             height: 0.1
+            params:
+                color: '#667BC6'
+                alpha: 1.0
 
 animator_params:
     xlim_lb: -1                         #Lower bound of x axis
