@@ -134,7 +134,7 @@ class TractorTrailerModel(Model):
         
         pose = self._transform_pose(tractor_pose, translation, 0.)
         
-        graphic_model.append(Rectangle("tractor", pose[0:2], tractor["width"], tractor["height"], rotate_angle=pose[2]))
+        graphic_model.append(Rectangle("tractor", pose[0:2], tractor["width"], tractor["height"], rotate_angle=pose[2], params=tractor["params"]))
         
         # Trailer
         trailer = self._graphic_model_params["trailer"]
@@ -144,7 +144,7 @@ class TractorTrailerModel(Model):
         
         pose = self._transform_pose(trailer_pose, translation, 0.)  
           
-        graphic_model.append(Rectangle("trailer", pose[0:2], trailer["width"], trailer["height"], rotate_angle=pose[2]))
+        graphic_model.append(Rectangle("trailer", pose[0:2], trailer["width"], trailer["height"], rotate_angle=pose[2], params=trailer["params"]))
         
         # hitch_joint
         hitch_joint  = self._graphic_model_params["hitch_joint"]
@@ -154,7 +154,7 @@ class TractorTrailerModel(Model):
         
         pose = self._transform_pose(trailer_pose, translation, 0.) 
                   
-        graphic_model.append(Circle("hitch_joint", pose[0:2], hitch_joint["radius"]))
+        graphic_model.append(Circle("hitch_joint", pose[0:2], hitch_joint["radius"], params=hitch_joint["params"]))
 
         #front_wheels
         front_wheel = self._graphic_model_params["front_wheels"]
@@ -169,9 +169,9 @@ class TractorTrailerModel(Model):
         
         lw_pose = self._transform_pose(tractor_pose, lw_translation, 0.) 
                  
-        graphic_model.append(Rectangle("front_right_wheel", rw_pose[0:2], front_wheel["width"], front_wheel["height"], rotate_angle=rw_pose[2]))
+        graphic_model.append(Rectangle("front_right_wheel", rw_pose[0:2], front_wheel["width"], front_wheel["height"], rotate_angle=rw_pose[2], params=front_wheel["params"]))
         
-        graphic_model.append(Rectangle("front_left_wheel", lw_pose[0:2], front_wheel["width"], front_wheel["height"], rotate_angle=lw_pose[2]))
+        graphic_model.append(Rectangle("front_left_wheel", lw_pose[0:2], front_wheel["width"], front_wheel["height"], rotate_angle=lw_pose[2], params=front_wheel["params"]))
 
         #back_wheels
         back_wheel = self._graphic_model_params["back_wheels"]
@@ -186,9 +186,9 @@ class TractorTrailerModel(Model):
         
         lw_pose = self._transform_pose(trailer_pose, lw_translation, 0.) 
                  
-        graphic_model.append(Rectangle("front_right_wheel", rw_pose[0:2], back_wheel["width"], back_wheel["height"], rotate_angle=rw_pose[2]))
+        graphic_model.append(Rectangle("front_right_wheel", rw_pose[0:2], back_wheel["width"], back_wheel["height"], rotate_angle=rw_pose[2], params=back_wheel["params"]))
         
-        graphic_model.append(Rectangle("front_left_wheel", lw_pose[0:2], back_wheel["width"], back_wheel["height"], rotate_angle=lw_pose[2]))
+        graphic_model.append(Rectangle("front_left_wheel", lw_pose[0:2], back_wheel["width"], back_wheel["height"], rotate_angle=lw_pose[2],  params=back_wheel["params"]))
         
         return graphic_model   
 

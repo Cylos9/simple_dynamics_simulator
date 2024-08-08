@@ -90,7 +90,7 @@ class Animator:
                 
                 artist_collection += self._axes.plot(path_value[0, :i], path_value[1, :i], linestyle='-', color=self._param['dynamic_path_color'][index], label=path_name, animated=True)
   
-            # Robot path collection
+            # Robot patch collection
             state = states[:,i]
             
             graphic_model = self._model.graphic_model(state)
@@ -156,9 +156,9 @@ class Animator:
         y = y_c - graphic_object.height / 2
         
         theta_in_deg = theta * 180 / pi 
-        
+
         patch = mpatches.Rectangle((x, y), graphic_object.width, graphic_object.height, 
-                  angle=theta_in_deg, rotation_point='center', color=self._param["robot_color"], animated=True)
+                  angle=theta_in_deg, rotation_point='center', animated=True, **graphic_object.params)
          
         return self._axes.add_patch(patch)
         
@@ -166,7 +166,7 @@ class Animator:
 
         x_c, y_c = graphic_object.center
          
-        patch = mpatches.Circle((x_c, y_c), radius = graphic_object.radius,  color=self._param["robot_color"], animated=True)
+        patch = mpatches.Circle((x_c, y_c), radius = graphic_object.radius, animated=True, **graphic_object.params)
         
         return self._axes.add_patch(patch)
     
